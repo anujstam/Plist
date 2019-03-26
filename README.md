@@ -44,6 +44,8 @@ Min and Max is O(1) because it is updated as and when values are inserted into t
 Sorting uses the TimSort algorithm for best real world performance. Other major sorting algorithms are also provided for comparison.
 The structure keeps track of whether it is sorted or not as and when inputs come in, which allows repetitive sorting to be skipped. It also allows for an easy way to determine the best search algorithm to use
 
+A convenient display function display(plist p) allows for easy viewing of the plist
+
 
 Almost every main python list function has been implemented.
 
@@ -52,6 +54,7 @@ Almost every main python list function has been implemented.
 ### Todos
 
  - Set operation
+ - Sum, Copy, Iter, Filter, Map, Reverse
  - Efficiency checking
  - Multiple sort algo implementations
  - (maybe) allow other data types

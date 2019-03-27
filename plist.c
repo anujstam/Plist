@@ -1,3 +1,20 @@
+/*
+ * Developed by Anuj Sanjay Tambwekar
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -7,6 +24,7 @@ void init_plist(plist* p){
 	p->size = 0;
 	p->min = -1;
 	p->max = -1;
+	p->sorted = 1;
 	p->pyl = NULL;
 }
 
@@ -29,6 +47,9 @@ void append(plist* p, int n){
 			if (p->max < n){
 				p->max = n;
 			}
+			else{
+				p->sorted = 0;
+			}
 		}
 		else{
 			printf("Fatal Plist Realloc error. Plist array was set to NULL\n");
@@ -50,6 +71,9 @@ void extend(plist* p, int count, ...){
 				}
 				if (p->max < n){
 					p->max = n;
+				}
+				else{
+					p->sorted = 0;
 				}
 			}
 		}
@@ -113,6 +137,7 @@ void del(plist* p, int index){
 			p->pyl = temp;
 			p->size -=1;
 			checkminmax(p);
+			p->sorted = checksorted(*p);
 		}
 		else{
 			printf("Fatal realloc\n");
@@ -143,6 +168,7 @@ int pop_verbose(plist* p, int v){
 					}
 				}
 			}
+			p->sorted = checksorted(*p);
 			return n;
 		}
 		else{
@@ -196,27 +222,31 @@ void insert(plist* p, int val, int index){
 			if (p->max < val){
 				p->max = val;
 			}
-		p->pyl = temp; 
-		}
+			p->pyl = temp;
+			p->sorted = checksorted(*p);
+	}
 	else{
 		printf("Fatal Plist Realloc error. Plist array was set to NULL\n");
 	}
 }
 
-void SortInsertion(plist* p){ 
-	int i, key, j; 
-    for (i = 1; i < p->size; i++) { 
-        key = p->pyl[i]; 
-        j = i - 1; 
-        while (j >= 0 && p->pyl[j] > key) { 
-            p->pyl[j + 1] = p->pyl[j]; 
-            j = j - 1; 
-        } 
-        p->pyl[j + 1] = key; 
-    }
+void InsertionSort(plist* p){
+	if (p->sorted == 0){
+		int i, key, j; 
+		for (i = 1; i < p->size; i++) { 
+			key = p->pyl[i]; 
+			j = i - 1; 
+			while (j >= 0 && p->pyl[j] > key) { 
+				p->pyl[j + 1] = p->pyl[j]; 
+				j = j - 1; 
+			} 
+			p->pyl[j + 1] = key; 
+		}
+		p->sorted = 1;
+	}
 }
 
-void insertionSort(plist* p, int left, int right) { 
+void insertionSortTim(plist* p, int left, int right) { 
     for (int i = left + 1; i <= right; i++){ 
         int temp = p->pyl[i]; 
         int j = i - 1; 
@@ -270,18 +300,80 @@ int min(int a,int b){
 	return b;
 }
 
-void TimSort(plist* p){ 
-	int RUN = 32;
-	int n = p->size;
-    // Sort individual subarrays of size RUN 
-    for (int i = 0; i < n; i+=RUN){ 
-        insertionSort(p, i, min((i+31), (n-1)));
+void TimSort(plist* p){
+	if (p->sorted == 0){
+		int RUN = 32;
+		int n = p->size;
+		// Sort individual subarrays of size RUN 
+		for (int i = 0; i < n; i+=RUN){ 
+			insertionSortTim(p, i, min((i+31), (n-1)));
+		}
+		for (int size = RUN; size < n; size = 2*size){ 
+			for (int left = 0; left < n; left += 2*size){ 
+				int mid = left + size - 1; 
+				int right = min((left + 2*size - 1), (n-1)); 
+				merge(p, left, mid, right); 
+			}	 
+		}
+		p->sorted = 1;
 	}
-    for (int size = RUN; size < n; size = 2*size){ 
-        for (int left = 0; left < n; left += 2*size){ 
-            int mid = left + size - 1; 
-            int right = min((left + 2*size - 1), (n-1)); 
-            merge(p, left, mid, right); 
-        } 
+}
+
+void BubbleSort(plist* p){
+	if (p->sorted == 0){
+		int n = p->size;
+		int temp;
+		for(int i=0;i<n;i++){
+			for(int j=0;j<n-1-i;j++){
+				if (p->pyl[j]>p->pyl[j+1]){
+					temp = p->pyl[j];
+					p->pyl[j] = p->pyl[j+1];
+					p->pyl[j+1] = temp;
+				}
+			}
+		}
+		p->sorted = 1;
+	}
+}
+
+int checksorted(plist p){
+	int lim = p.size;
+	for(int i=0;i<lim-1;i++){
+		if (p.pyl[i]>p.pyl[i+1]){
+			return 0;
+		}
+	}
+	return 1;
+}
+
+int seqsearch(plist p, int val){
+	for (int i=0;i<p.size;i++){
+		if (p.pyl[i] == val){
+			return i;
+		}
+	}
+	return -1;
+}
+
+int binsearch(plist p, int l, int r, int val){ 
+    if (r >= l){ 
+        int mid = l + (r - l) / 2; 
+        if (p.pyl[mid] == val){ 
+            return mid;
+		}
+        if (p.pyl[mid] > val){
+            return binsearch(p, l, mid - 1, val); 
+		} 
+        return binsearch(p, mid + 1, r, val); 
     } 
-}   
+    return -1; 
+} 
+
+int search(plist p, int val){
+	if (p.sorted == 1){
+		return binsearch(p,0,p.size-1,val);
+	}
+	else{
+		return seqsearch(p,val);
+	}
+}	

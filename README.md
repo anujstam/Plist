@@ -9,7 +9,7 @@ Plist was made as a project for self use and for educational purposes.
 ## Structure 
 Plist structures have the following components 
 
-  - An integer array (pyl)
+  - An integer array (list)
   - The number of elements in the array (size)
   - The minimal value in the array (min)
   - The maximal value in the array (max)
@@ -19,7 +19,7 @@ Plist structures have the following components
 
 Plists can be initialized using the init_plist() function to set up default values.
 Maximal and Minimal elements can be accessed directly using Plist.max and Piist.min
-To access the actual integer array use Plist.pyl, and use Plist.size to determine the number of elements in it
+To access the actual integer array use Plist.list, and use Plist.size to determine the number of elements in it
 
 Plist works by reallocating the list when the capacity changes. In the event of a reallocation error, an error message is displayed
 
@@ -35,13 +35,25 @@ The standard pythonic list functions have been implemented for the same. These i
  
 Other functions such as extend, intersection, union, difference are also included
 
+The TimSort implementation is not a 100% implementation of the Timsort in python. It uses a similar concept, IE divides the array into arrays of size 32, performs insertion sort on them and merges the sequential arrays. The run-off arrays that are produced in the process are merged while this happens before they are finally merged with the total array
+
 ## Features
 
 You do not need to worry about input sizes. The Plist is able to resize itself to take up exactly as much space as it requires. Nothing more and nothing less.
 
 Min and Max is O(1) because it is updated as and when values are inserted into the list. There is a slight decrease in deletion efficiency in cases where the minimum or maximum value is deleted.
 
-Sorting uses the TimSort algorithm for best real world performance. Other major sorting algorithms are also provided for comparison.
+Sorting uses the TimSort algorithm for best real world performance.Other major sorting algorithms are also provided for comparison.The performance on the test file provided is as follows:
+
+|                | 2K    | 10K   | 64K    | 128K   | 256K    | 512K     |
+|----------------|-------|-------|--------|--------|---------|----------|
+| Timsort        | 0     | 0.002 | 0.022  | 0.025  | 0.069   | 0.08     |
+| Merge Sort     | 0.001 | 0.004 | 0.026  | 0.04   | 0.091   | 0.093    |
+| Quicksort      | 0     | 0.003 | 0.02   | 0.032  | 0.0776  | 0.0784   |
+| Insertion Sort | 0.007 | 0.11  | 6.042  | 10.948 | 114.423 | 146.198  |
+| Selection Sort | 0.01  | 0.157 | 6.207  | 17.691 | 125.61  | 241.509  |
+| Bubble Sort    | 0.021 | 0.333 | 15.076 | 55.507 | 230.964 | 1458.843 |
+
 The structure keeps track of whether it is sorted or not as and when inputs come in, which allows repetitive sorting to be skipped. It also allows for an easy way to determine the best search algorithm to use
 
 A convenient display function display(plist p) allows for easy viewing of the plist
@@ -53,16 +65,13 @@ Almost every main python list function has been implemented.
 
 ### Todos
 
- - Set operation
- - Sum, Copy, Iter, Filter, Map, Reverse
- - Efficiency checking
- - Multiple sort algo implementations
+ - Iter, Filter, Map
  - (maybe) allow other data types
 
 License
 ----
 
-MIT
+Apache
 
 
 ___

@@ -43,16 +43,7 @@ You do not need to worry about input sizes. The Plist is able to resize itself t
 
 Min and Max is O(1) because it is updated as and when values are inserted into the list. There is a slight decrease in deletion efficiency in cases where the minimum or maximum value is deleted.
 
-Sorting uses the TimSort algorithm for best real world performance.Other major sorting algorithms are also provided for comparison.The performance on the test file provided is as follows:
-
-|                | 2K    | 10K   | 64K    | 128K   | 256K    | 512K     |
-|----------------|-------|-------|--------|--------|---------|----------|
-| Timsort        | 0     | 0.002 | 0.022  | 0.025  | 0.069   | 0.08     |
-| Merge Sort     | 0.001 | 0.004 | 0.026  | 0.04   | 0.091   | 0.093    |
-| Quicksort      | 0     | 0.003 | 0.02   | 0.032  | 0.077   | 0.078    |
-| Insertion Sort | 0.007 | 0.11  | 6.042  | 10.948 | 114.423 | 146.198  |
-| Selection Sort | 0.01  | 0.157 | 6.207  | 17.691 | 125.61  | 241.509  |
-| Bubble Sort    | 0.021 | 0.333 | 15.076 | 55.507 | 230.964 | 1458.843 |
+Sorting uses the TimSort algorithm for best real world performance.
 
 The structure keeps track of whether it is sorted or not as and when inputs come in, which allows repetitive sorting to be skipped. It also allows for an easy way to determine the best search algorithm to use
 
